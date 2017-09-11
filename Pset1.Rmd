@@ -7,6 +7,8 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(haven)
+library(psych)
 ```
 
 **Part 1**
@@ -25,8 +27,19 @@ knitr::opts_chunk$set(echo = TRUE)
     c) \textbf{Weighing all considerations for the intended use of these scores for college admissions, what would be your recommendation to the company for how they should use this third score?}
   
 **Part 2**
+```{r,echo=T}
+#Read in data
+grt_wide <- read_dta("./Assignment1.dta")
+```
 
 5) \textbf{Using Stata, calculate coefficient alpha for the first occasion and the second occasion separately.   In a sentence or two, interpret coefficient alpha for the first occasion (see also Question 16).}
+```{r,echo=T}
+alpha_time1 <- alpha(grt_wide[,c(paste0("x_o1_i",1:12))])$total$std.alpha
+
+alpha_time2 <- alpha(grt_wide[,c(paste0("x_o2_i",1:12))])$total$std.alpha
+```
+
+
 
 6) \textbf{Using Stata, calculate the average score of participants from the first occasion, then calculate the average score of participants from the second occasion. Then, calculate the correlation between the two average scores using code like pwcorr avgscr1 avgscr2.  Report this correlation and, in a sentence or two, provide an interpretation (see also Question 16).}
 
