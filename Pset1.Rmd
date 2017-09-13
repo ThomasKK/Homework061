@@ -19,6 +19,8 @@ library(tidyr)
 
 1) \textbf{On the basis of this correlation, the researcher states that the reliability of the ratings is 0.7.  What score is she assuming is relevant, that has a reliability of 0.7? Is it the score from e-Rater A? The score from e-Rater B? Some combination of both scores? A score from any single e-Rater? Or other?}
 
+my name is vinh and i smell
+
 2) \textbf{If the researcher considers 0.7 to be the reliability, what is the replication that she assumes is relevant?  What is random, and what is fixed?}
 
 3) \textbf{Apply Spearman-Brown (actually perform a calculation) to estimate the reliability of the average these two e-Rater scores.}
