@@ -1,6 +1,6 @@
 ---
 title: "Problem Set 1"
-author: "Thomas Kelley-Kemple, Joanna Moody, Vinh Nyugen, Joanna"
+author: "Thomas Kelley-Kemple, Joanna Moody, Vinh Nguyen"
 date: "September 18, 2017"
 output: pdf_document
 ---
