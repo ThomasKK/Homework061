@@ -74,15 +74,6 @@ colnames(data_raw) <- c("person", paste0("1_",1:12), paste0("2_",1:12))
 
 data_long <- melt(data_raw, id.vars=c("person"))
 data_long <- separate(data = data_long, col = variable, into = c("occasion", "item"), sep = "_")
-
-# 
-# grt_long <- melt(grt_wide,id.vars = "person",variable.name = "item",
-#                  value.name = "response")
-# grt_long$occasion <- as.factor(ifelse(grepl(pattern = 01,x = grt_long$item),1,2))
-# grt_long$question <- as.factor(gsub(pattern = "x_o[1-2]_i",
-#                                      replacement = "",
-#                                      x = grt_long$item))
-
 ```
 
 8) \textbf{8. Note the code available to you in the .do files, and include a) a discrete histogram of all 25x12x2 scores, b) a histogram of marginal person scores, c) a histogram of marginal item scores, and d) a histogram of marginal occasion scores.  Use discrete histograms where you think they are appropriate, or substitute tables if histograms are not informative, for example, tabulate occasion, summarize(score) .  Histograms of interactions are not necessary.}
@@ -92,11 +83,21 @@ data_long <- separate(data = data_long, col = variable, into = c("occasion", "it
 
 9) \textbf{Write out the model implied by the data collection design under the tenets of Generalizability Theory.  Draw the Venn diagram for this design.}
 
-The model implied here can be written as $$ model model model$$. The ven diagram for the variances is seen below:
+The model implied here can be written as
+\begin{align*}
+X_{pi}&=\mu + \nu_p + \nu_i +\nu_o+ \nu_{pi}+ \nu_{po}+ \nu_{oi}+ \nu_{pio,e}\\
+\nu_p&\sim N(0,\sigma^2_p)\\
+\nu_i&\sim N(0,\sigma^2_i)\\
+\nu_o&\sim N(0,\sigma^2_o)\\
+\nu_{pi}&\sim N(0,\sigma^2_{pi})\\
+\nu_{po}&\sim N(0,\sigma^2_{po})\\
+\nu_{io}&\sim N(0,\sigma^2_{io})\\
+\nu_{pio,e}&\sim N(0,\sigma^2_{pio,e})
+\end{align*}
+The ven diagram for the variances is seen below:
 
-```{r,fig.align='center',fig.width=5,fig.height=3}
+```{r,echo=F,fig.align='center',fig.width=5,fig.height=3}
 knitr::include_graphics('./VennDiagram.jpg')
-
 ```
 
 10) \textbf{Estimate the variance components for this model using the mixed or xtmixed command. Feel free to go get coffee while this runs.  Don’t forget to create interactions using commands like egen pXi = group(person item).  Include a table with four columns, the source of variance, the estimated variance components, their square roots, and their percentage of total score variance.}
@@ -117,9 +118,18 @@ summary(mixed)
 
 12) \textbf{Estimate the Mean Squares for this model using the anova command.  You will first need to set the maximum matrix size to a large number, using code like set matsize 1000. Write out the equation for the estimated variance component, $\hat{\sigma^2_p}$, in terms of mean squares, $MS$, and confirm that this calculation corresponds to your results from mixed or xtmixed.  Recall that $n_p =25, n_i=12$ and $n_o=2$.}
 
+```{r}
+anovlm <- lm(value ~ person + item + occasion +
+               pxi + pxo + oxi,data=data_long )
+
+anova(anovlm)
+```
+
 13) \textbf{Calculate and report the mean and standard deviation of marginal person scores, averaging over items and occasions.  Following the code from class, you could obtain this using code like, summarize pmean if ptag .  Explain why the term $\hat{\sigma_p}$, is less than the standard deviation of marginal person means.}
 
 14) \textbf{Describe the $o$, $po$, and $io$ variance components in words, and include whether they are good, bad, or neutral with respect to relative error in a $p \times i \times o$ design.   There is no need to reference the actual values, here.}
+
+The $o$ variance component describes variance across occations. 
 
 **Part 4**
 
