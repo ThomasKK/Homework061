@@ -9,6 +9,10 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 library(haven)
 library(psych)
+library(plyr)
+library(reshape2)
+library(lme4)
+library(tidyr)
 ```
 
 **Part 1**
@@ -29,21 +33,57 @@ library(psych)
 **Part 2**
 ```{r,echo=T}
 #Read in data
-grt_wide <- read_dta("./Assignment1.dta")
+data_raw<- read_dta("./Assignment1.dta")
 ```
 
 5) \textbf{Using Stata, calculate coefficient alpha for the first occasion and the second occasion separately.   In a sentence or two, interpret coefficient alpha for the first occasion (see also Question 16).}
 ```{r,echo=T}
-alpha_time1 <- alpha(grt_wide[,c(paste0("x_o1_i",1:12))])$total$std.alpha
-
-alpha_time2 <- alpha(grt_wide[,c(paste0("x_o2_i",1:12))])$total$std.alpha
+#create variable lists
+o1 <- paste0("x_o1_i", 1:12)
+o2 <- paste0("x_o2_i", 1:12)
+#subset data
+data_o1 <- subset(data_raw, select = o1)
+data_o2 <- subset(data_raw, select = o2)
+#create alpha output
+alpha1 <- alpha(data_o1, keys=NULL, title=NULL, cumulative=FALSE, max=10, na.rm = TRUE, check.keys=TRUE, n.iter=1, delete=TRUE)
+alpha2 <- alpha(data_o2, keys=NULL, title=NULL, cumulative=FALSE, max=10, na.rm = TRUE, check.keys=TRUE, n.iter=1, delete=TRUE)
+#get just the alpha numbers
+alpha_time1 <- alpha1$total$std.alpha
+alpha_time2 <- alpha2$total$std.alpha
+#output alpha data
+alpha1
+alpha2
 ```
 
-
+For this sample $\alpha_1 = `r round(alpha_time1,3)`$ and $\alpha_2 = `r round(alpha_time2,3)`$
 
 6) \textbf{Using Stata, calculate the average score of participants from the first occasion, then calculate the average score of participants from the second occasion. Then, calculate the correlation between the two average scores using code like pwcorr avgscr1 avgscr2.  Report this correlation and, in a sentence or two, provide an interpretation (see also Question 16).}
+```{r}
+avg_o1 <- rowMeans(data_o1)
+avg_o2 <- rowMeans(data_o2)
+
+cor(avg_o1, avg_o2)
+```
 
 7) \textbf{ Reload the data and reshape it for analysis in Stata.  Although it is a pain, I am requiring you to use some of the code that we have presented in the past .do files to reshape the data from “double-wide” format.  See, for example, the Class03.do and Class04.do files.  As one way to check your work, submit a screenshot of the output from code like table person item occasion, contents(mean score) and/or simply table person item occasion .}
+
+```{r,echo=T}
+
+data_raw$person <- factor(data_raw$person)
+colnames(data_raw) <- c("person", paste0("1_",1:12), paste0("2_",1:12))
+
+data_long <- melt(data_raw, id.vars=c("person"))
+data_long <- separate(data = data_long, col = variable, into = c("occasion", "item"), sep = "_")
+
+# 
+# grt_long <- melt(grt_wide,id.vars = "person",variable.name = "item",
+#                  value.name = "response")
+# grt_long$occasion <- as.factor(ifelse(grepl(pattern = 01,x = grt_long$item),1,2))
+# grt_long$question <- as.factor(gsub(pattern = "x_o[1-2]_i",
+#                                      replacement = "",
+#                                      x = grt_long$item))
+
+```
 
 8) \textbf{8. Note the code available to you in the .do files, and include a) a discrete histogram of all 25x12x2 scores, b) a histogram of marginal person scores, c) a histogram of marginal item scores, and d) a histogram of marginal occasion scores.  Use discrete histograms where you think they are appropriate, or substitute tables if histograms are not informative, for example, tabulate occasion, summarize(score) .  Histograms of interactions are not necessary.}
 
@@ -52,7 +92,26 @@ alpha_time2 <- alpha(grt_wide[,c(paste0("x_o2_i",1:12))])$total$std.alpha
 
 9) \textbf{Write out the model implied by the data collection design under the tenets of Generalizability Theory.  Draw the Venn diagram for this design.}
 
+The model implied here can be written as $$ model model model$$. The ven diagram for the variances is seen below:
+
+```{r,fig.align='center',fig.width=5,fig.height=3}
+knitr::include_graphics('./VennDiagram.jpg')
+
+```
+
 10) \textbf{Estimate the variance components for this model using the mixed or xtmixed command. Feel free to go get coffee while this runs.  Don’t forget to create interactions using commands like egen pXi = group(person item).  Include a table with four columns, the source of variance, the estimated variance components, their square roots, and their percentage of total score variance.}
+
+```{r,echo=T}
+
+data_long$pxi <- as.factor(100*as.numeric(data_long$person)+as.numeric(data_long$item))
+data_long$pxo <- as.factor(100*as.numeric(data_long$person)+as.numeric(data_long$occasion))
+data_long$oxi <- as.factor(10*as.numeric(data_long$occasion)+as.numeric(data_long$item))
+
+mixed <- lmer(value ~ 1 + (1|person) + (1|item) + (1|occasion) + (1|pxi) + 
+                (1|pxo) + (1|oxi) ,data=data_long)
+
+summary(mixed)
+```
 
 11) \textbf{A novice psychometrician with no sense of the context observes from the percentages, “it looks like items are a much greater source of variance than occasions!”  Explain the flaw in this reasoning.}
 
