@@ -27,7 +27,7 @@ The researcher is referring to the reliability of the score generating processes
 
 ##2) If the researcher considers 0.7 to be the reliability, what is the replication that she assumes is relevant?  What is random, and what is fixed?
 
-<<<<<<< HEAD
+
 The replication is the scoring process involving a random e-Rater (or, scoring algorithm).  The e-Rater/scoring algorithm is random, but the students, form, and testing occasion are fixed.
 
 ##3) Apply Spearman-Brown (actually perform a calculation) to estimate the reliability of the average these two e-Rater scores.
@@ -45,7 +45,7 @@ SB_Rho(2,.7)
 ##4) The company asks you what a valid use of the third score would be. Remember this score is available for only 10\% of examinees. Should the company use this score alone? Should it use the unweighted average of the three scores (the two e-rater scores and the human score)?  Should it ignore the score and use the average of the two e-Rater scores?  Answer the following questions:
     
 ###a) If you were an examinee with a high (well above average) true score, would you rather have the human score, the average of the two e-rater scores, or the average of all three scores?
-=======
+
 The researcher is referring to the reliability of the score generating processes by the population of random e-Raters with different scoring algorithms for this specific essay prompt, from which e-Raters A and B came.  We can think of this as the inter-rater reliability 
 
 2) \textbf{If the researcher considers 0.7 to be the reliability, what is the replication that she assumes is relevant?  What is random, and what is fixed?}
@@ -66,8 +66,7 @@ SB_Rho(2,.7)
 
 4) \textbf{The company asks you what a valid use of the third score would be. Remember this score is available for only 10\% of examinees. Should the company use this score alone? Should it use the unweighted average of the three scores (the two e-rater scores and the human score)?  Should it ignore the score and use the average of the two e-Rater scores?  Answer the following questions:}
     a) \textbf{If you were an examinee with a high (well above average) true score, would you rather have the human score, the average of the two e-rater scores, or the average of all three scores?}
->>>>>>> e204217dc3658dcb83eb91fabed3ebabca0825f9
-    
+
 ###b) If you were an examinee with a low (well below average) true score, would you rather have the human score, the average of the two e-rater scores, or the average of all three scores? 
   
 ###c) Weighing all considerations for the intended use of these scores for college admissions, what would be your recommendation to the company for how they should use this third score?
@@ -94,22 +93,18 @@ alpha2 <- alpha(data_o2, keys=NULL, title=NULL, cumulative=FALSE, max=10, na.rm 
 alpha_time1 <- alpha1$total$std.alpha
 alpha_time2 <- alpha2$total$std.alpha
 #output alpha data
-<<<<<<< HEAD
 alpha1
 alpha2
-
 
 
 pander(alpha2)
 summary(alpha2)
 pander(summary(alpha2))
 
- 
-=======
 alpha1[c(1,2)]
 alpha2[c(1,2)]
->>>>>>> e204217dc3658dcb83eb91fabed3ebabca0825f9
 ```
+ 
 
 For this sample $\alpha_1 = `r round(alpha_time1,3)`$ and $\alpha_2 = `r round(alpha_time2,3)`$
 
@@ -132,12 +127,10 @@ data_long <- melt(data_raw, id.vars=c("person"))
 data_long <- separate(data = data_long, col = variable, into = c("occasion", "item"), sep = "_")
 ```
 
-<<<<<<< HEAD
 ##8) 8. Note the code available to you in the .do files, and include a) a discrete histogram of all 25x12x2 scores, b) a histogram of marginal person scores, c) a histogram of marginal item scores, and d) a histogram of marginal occasion scores.  Use discrete histograms where you think they are appropriate, or substitute tables if histograms are not informative, for example, tabulate occasion, summarize(score) .  Histograms of interactions are not necessary.
 =======
 8) \textbf{Note the code available to you in the .do files, and include a) a discrete histogram of all 25x12x2 scores, b) a histogram of marginal person scores, c) a histogram of marginal item scores, and d) a histogram of marginal occasion scores.  Use discrete histograms where you think they are appropriate, or substitute tables if histograms are not informative, for example, tabulate occasion, summarize(score) .  Histograms of interactions are not necessary.}
 
->>>>>>> e204217dc3658dcb83eb91fabed3ebabca0825f9
 
 \newpage
 #Part 3: The Generalizability Study
@@ -155,12 +148,11 @@ X_{pi}&=\mu + \nu_p + \nu_i +\nu_o+ \nu_{pi}+ \nu_{po}+ \nu_{oi}+ \nu_{pio,e}\\
 \nu_{io}&\sim N(0,\sigma^2_{io})\\
 \nu_{pio,e}&\sim N(0,\sigma^2_{pio,e})
 \end{align*}
-<<<<<<< HEAD
-The venn diagram for the variances is seen below:
+
+ The venn diagram for the variances is seen below:
 =======
 The Venn diagram for the variances is seen below:
->>>>>>> e204217dc3658dcb83eb91fabed3ebabca0825f9
-
+ 
 ```{r,echo=F,fig.align='center',fig.width=5,fig.height=3}
 knitr::include_graphics('./VennDiagram.jpg')
 ```
@@ -179,13 +171,12 @@ mixed <- lmer(value ~ 1 + (1|person) + (1|item) + (1|occasion) + (1|pxi) +
 summary(mixed)
 ```
 
-<<<<<<< HEAD
+
 ##11) A novice psychometrician with no sense of the context observes from the percentages, “it looks like items are a much greater source of variance than occasions!”  Explain the flaw in this reasoning.
 =======
 11) \textbf{A novice psychometrician with no sense of the context observes from the percentages, “it looks like items are a much greater source of variance than occasions!” Explain the flaw in this reasoning.}
 
 The novice is not taking into account the fact that there are many more items than occasions. Moreover, the cost of adding additional items may be quite low, especially as compared to adding another test. 
->>>>>>> e204217dc3658dcb83eb91fabed3ebabca0825f9
 
 ##12) Estimate the Mean Squares for this model using the anova command.  You will first need to set the maximum matrix size to a large number, using code like set matsize 1000. Write out the equation for the estimated variance component, $\hat{\sigma^2_p}$, in terms of mean squares, $MS$, and confirm that this calculation corresponds to your results from mixed or xtmixed.  Recall that $n_p =25, n_i=12$ and $n_o=2$.
 
@@ -196,7 +187,7 @@ anovlm <- lm(value ~ person + item + occasion +
 anova(anovlm)
 ```
 
-<<<<<<< HEAD
+
 ##13) Calculate and report the mean and standard deviation of marginal person scores, averaging over items and occasions.  Following the code from class, you could obtain this using code like, summarize pmean if ptag .  Explain why the term $\hat{\sigma_p}$, is less than the standard deviation of marginal person means.
 
 ##14) Describe the $o$, $po$, and $io$ variance components in words, and include whether they are good, bad, or neutral with respect to relative error in a $p \times i \times o$ design.   There is no need to reference the actual values, here.
@@ -220,7 +211,6 @@ round(sd(marg_person$mean_p),3)
 The estimate for $\sigma_p$ is smaller than our calcluated standard deviation here (.757 vs .834) because the variance across people also includes the variance of people interacted with items, people interacted with occasions, and people interacted with both (plus random error). The whole point of G-theory is to separate these components out and so we would be remiss to assume that this standard deviation of person scores is all attributable to true differences in their scores. 
 
 14) \textbf{Describe the $o$, $po$, and $io$ variance components in words, and include whether they are good, bad, or neutral with respect to relative error in a $p \times i \times o$ design.   There is no need to reference the actual values, here.}
->>>>>>> e204217dc3658dcb83eb91fabed3ebabca0825f9
 
 The $o$ variance component describes variance across occasions (constant across persons and items). This is ostensibly neutral as long as it affects all people equally. At the same time, we would prefer it to be smaller as it adds undesirable noise if we want to use the test score in an absolute setting. In contrast, the $po$ variance component is definitely bad, as it obfuscates both relative and absolute positions of persons across testing occasions. Finally, $oi$ variance is fairly benign. While it's not a good thing that items change across time, if it does not affect different people differently, then it will not alter peoples' relative scores. 
 
@@ -229,7 +219,6 @@ The $o$ variance component describes variance across occasions (constant across 
 
 ##15) Write out the full equation for the relative error variance, $\sigma^2_\delta$
 
-<<<<<<< HEAD
 ##16) Calculate the generalizability coefficient for relative error, $E\hat{\rho}^2$, when there are 12 items administered on one occasion.  Explain the differences between this coefficient, the coefficients from Question 5, and the coefficient from Question 6.  Explain the differences between the questions that these different coefficients answer.
 
 ##17) Use the “pxixr D Study Template” to include a graph of a) the standard error of measurement and b) the generalizability coefficient for relative error.  Relabel and rescale where appropriate.
@@ -276,7 +265,6 @@ relative_error <- function(mod,raters,items) {
 }
 
 ```
->>>>>>> e204217dc3658dcb83eb91fabed3ebabca0825f9
 
 ##18) If the scale is administered on 1 occasion, how many items are required to achieve a reliability of 0.75? You can use the template to answer this.
 
