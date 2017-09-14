@@ -76,7 +76,7 @@ data_long <- melt(data_raw, id.vars=c("person"))
 data_long <- separate(data = data_long, col = variable, into = c("occasion", "item"), sep = "_")
 ```
 
-8) \textbf{8. Note the code available to you in the .do files, and include a) a discrete histogram of all 25x12x2 scores, b) a histogram of marginal person scores, c) a histogram of marginal item scores, and d) a histogram of marginal occasion scores.  Use discrete histograms where you think they are appropriate, or substitute tables if histograms are not informative, for example, tabulate occasion, summarize(score) .  Histograms of interactions are not necessary.}
+8) \textbf{Note the code available to you in the .do files, and include a) a discrete histogram of all 25x12x2 scores, b) a histogram of marginal person scores, c) a histogram of marginal item scores, and d) a histogram of marginal occasion scores.  Use discrete histograms where you think they are appropriate, or substitute tables if histograms are not informative, for example, tabulate occasion, summarize(score) .  Histograms of interactions are not necessary.}
 
 
 **Part 3**
@@ -128,7 +128,7 @@ anova(anovlm)
 ```
 
 The equation for finding $\hat{sigma}^2_p$ is $$\frac{MS_p-MS_{pi}-MS_{po}+MS_{pio,e}}{n_in_o}$$
-plugging in the Mean Squares and $n$s from our ANOVA, we find that the estimated variance component is $$\hat{sigma}^2_p=\frac{16.7-1.72-1.97+.74}{12\cdot 2}=.5729$$
+plugging in the Mean Squares and $n$s from our ANOVA, we find that the estimated variance component is $$\hat{\sigma}^2_p=\frac{16.7-1.72-1.97+.74}{12\cdot 2}=.5729$$
 This is basically the same as the answer we recieved from the mixed model. 
 
 13) \textbf{Calculate and report the mean and standard deviation of marginal person scores, averaging over items and occasions.  Following the code from class, you could obtain this using code like, summarize pmean if ptag .  Explain why the term $\hat{\sigma_p}$, is less than the standard deviation of marginal person means.}
@@ -162,11 +162,32 @@ where $n'i$ and $n'o$ are the number of items and number of occasions of a hypot
 knitr::include_graphics('./Fig_Q15.jpg')
 ```
 
-The relative error does not include error terms $\sigma^2_i$ or $\sigma^2_o$ because variation across items or occasions, respectively, are the same for every person. Items that are more difficult will be more difficult for all persons and occasions whith distractions will be more difficult for all persons. Therefore, they do not affect the relative position of one person to another. The same is true for variability for item-occasion interactions (\sigma^2_{io}).
+The relative error does not include error terms $\sigma^2_i$ or $\sigma^2_o$ because variation across items or occasions, respectively, are the same for every person. Items that are more difficult will be more difficult for all persons and occasions whith distractions will be more difficult for all persons. Therefore, they do not affect the relative position of one person to another. The same is true for variability for item-occasion interactions ($\sigma^2_{io}$).
 
 16) \textbf{Calculate the generalization coefficient for relative error, $E\hat{\rho}^2$, when there are 12 items administered on one occasion.  Explain the differences between this coefficient, the coefficients from Question 5, and the coefficient from Question 6.  Explain the differences between the questions that these different coefficients answer.}
 
 17) \textbf{Use the “pxixr D Study Template” to include a graph of a) the standard error of measurement and b) the generalizability coefficient for relative error.  Relabel and rescale where appropriate.}
+
+```{r,echo=T}
+
+relative_error <- function(mod,raters,items) {
+  
+  sdvar <- as.data.frame(VarCorr(mod))
+  sdvar$varComp <- sdvar$sdcor^2
+  p <- sdvar$varComp[sdvar$grp=="person"]
+  o <- sdvar$varComp[sdvar$grp=="occasion"]
+  i <- sdvar$varComp[sdvar$grp=="item"]
+  pxi <- sdvar$varComp[sdvar$grp=="pxi"]
+  pxo <- sdvar$varComp[sdvar$grp=="pxo"]
+  oxi <- sdvar$varComp[sdvar$grp=="oxi"]
+  err <- sdvar$varComp[sdvar$grp=="Residual"]
+  
+  rel_err <- (pxi/items)+(pxo/raters)+(err/(items*raters))
+  return(rel_err)
+  
+}
+
+```
 
 18) \textbf{If the scale is administered on 1 occasion, how many items are required to achieve a reliability of 0.75? You can use the template to answer this.}
 
