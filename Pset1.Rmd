@@ -1,23 +1,50 @@
 ---
-title: "Problem Set 1"
+title: "S-061 Assignment 1"
 author: "Thomas Kelley-Kemple, Joanna Moody, Vinh Nguyen"
 date: "September 18, 2017"
 output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 library(haven)
 library(psych)
 library(plyr)
 library(reshape2)
 library(lme4)
 library(tidyr)
+library(pander)
+library(knitr)
+
+opts_chunk$set(echo = TRUE,tidy.opts=list(width.cutoff=80),tidy=TRUE)
+
 ```
 
-**Part 1**
+#Part 1: Classical Test Theory & Validation
 
-1) \textbf{On the basis of this correlation, the researcher states that the reliability of the ratings is 0.7.  What score is she assuming is relevant, that has a reliability of 0.7? Is it the score from e-Rater A? The score from e-Rater B? Some combination of both scores? A score from any single e-Rater? Or other?}
+##1) On the basis of this correlation, the researcher states that the reliability of the ratings is 0.7.  What _score_ is she assuming is relevant, that has a reliability of 0.7? Is it the score from e-Rater A? The score from e-Rater B? Some combination of both scores? A score from any single e-Rater? Or other?
+
+The researcher is referring to the reliability of the score generating processes by the population of random e-Raters with different scoring algorithms for this specific essay prompt, from which e-Raters A and B came.  We can think of this as the inter-rater reliability 
+
+##2) If the researcher considers 0.7 to be the reliability, what is the replication that she assumes is relevant?  What is random, and what is fixed?
+
+
+The replication is the scoring process involving a random e-Rater (or, scoring algorithm).  The e-Rater/scoring algorithm is random, but the students, form, and testing occasion are fixed.
+
+##3) Apply Spearman-Brown (actually perform a calculation) to estimate the reliability of the average these two e-Rater scores.
+
+```{r}
+#create function to calculate Spearman-Brown
+SB_Rho<-function(k,rho){
+  return(k*rho/(1+(k-1)*rho))
+}
+
+SB_Rho(2,.7)
+```
+
+
+##4) The company asks you what a valid use of the third score would be. Remember this score is available for only 10\% of examinees. Should the company use this score alone? Should it use the unweighted average of the three scores (the two e-rater scores and the human score)?  Should it ignore the score and use the average of the two e-Rater scores?  Answer the following questions:
+    
+###a) If you were an examinee with a high (well above average) true score, would you rather have the human score, the average of the two e-rater scores, or the average of all three scores?
 
 The researcher is referring to the reliability of the score generating processes by the population of random e-Raters with different scoring algorithms for this specific essay prompt, from which e-Raters A and B came.  We can think of this as the inter-rater reliability 
 
@@ -39,18 +66,19 @@ SB_Rho(2,.7)
 
 4) \textbf{The company asks you what a valid use of the third score would be. Remember this score is available for only 10\% of examinees. Should the company use this score alone? Should it use the unweighted average of the three scores (the two e-rater scores and the human score)?  Should it ignore the score and use the average of the two e-Rater scores?  Answer the following questions:}
     a) \textbf{If you were an examinee with a high (well above average) true score, would you rather have the human score, the average of the two e-rater scores, or the average of all three scores?}
-    
-    b) \textbf{If you were an examinee with a low (well below average) true score, would you rather have the human score, the average of the two e-rater scores, or the average of all three scores? }
+
+###b) If you were an examinee with a low (well below average) true score, would you rather have the human score, the average of the two e-rater scores, or the average of all three scores? 
   
-    c) \textbf{Weighing all considerations for the intended use of these scores for college admissions, what would be your recommendation to the company for how they should use this third score?}
+###c) Weighing all considerations for the intended use of these scores for college admissions, what would be your recommendation to the company for how they should use this third score?
   
-**Part 2**
+\newpage
+#Part 2: Classical Test Theory and Exploratory Analysis
 ```{r,echo=T}
 #Read in data
 data_raw<- read_dta("./Assignment1.dta")
 ```
 
-5) \textbf{Using Stata, calculate coefficient alpha for the first occasion and the second occasion separately.   In a sentence or two, interpret coefficient alpha for the first occasion (see also Question 16).}
+##5) Using Stata, calculate coefficient alpha for the first occasion and the second occasion separately.   In a sentence or two, interpret coefficient alpha for the first occasion (see also Question 16).
 ```{r,echo=T}
 #create variable lists
 o1 <- paste0("x_o1_i", 1:12)
@@ -65,13 +93,22 @@ alpha2 <- alpha(data_o2, keys=NULL, title=NULL, cumulative=FALSE, max=10, na.rm 
 alpha_time1 <- alpha1$total$std.alpha
 alpha_time2 <- alpha2$total$std.alpha
 #output alpha data
+alpha1
+alpha2
+
+
+pander(alpha2)
+summary(alpha2)
+pander(summary(alpha2))
+
 alpha1[c(1,2)]
 alpha2[c(1,2)]
 ```
+ 
 
 For this sample $\alpha_1 = `r round(alpha_time1,3)`$ and $\alpha_2 = `r round(alpha_time2,3)`$
 
-6) \textbf{Using Stata, calculate the average score of participants from the first occasion, then calculate the average score of participants from the second occasion. Then, calculate the correlation between the two average scores using code like pwcorr avgscr1 avgscr2.  Report this correlation and, in a sentence or two, provide an interpretation (see also Question 16).}
+##6) Using Stata, calculate the average score of participants from the first occasion, then calculate the average score of participants from the second occasion. Then, calculate the correlation between the two average scores using code like pwcorr avgscr1 avgscr2.  Report this correlation and, in a sentence or two, provide an interpretation (see also Question 16).
 ```{r}
 avg_o1 <- rowMeans(data_o1)
 avg_o2 <- rowMeans(data_o2)
@@ -79,7 +116,7 @@ avg_o2 <- rowMeans(data_o2)
 cor(avg_o1, avg_o2)
 ```
 
-7) \textbf{ Reload the data and reshape it for analysis in Stata.  Although it is a pain, I am requiring you to use some of the code that we have presented in the past .do files to reshape the data from “double-wide” format.  See, for example, the Class03.do and Class04.do files.  As one way to check your work, submit a screenshot of the output from code like table person item occasion, contents(mean score) and/or simply table person item occasion .}
+##7) Reload the data and reshape it for analysis in Stata.  Although it is a pain, I am requiring you to use some of the code that we have presented in the past .do files to reshape the data from “double-wide” format.  See, for example, the Class03.do and Class04.do files.  As one way to check your work, submit a screenshot of the output from code like table person item occasion, contents(mean score) and/or simply table person item occasion .
 
 ```{r,echo=T}
 
@@ -90,12 +127,15 @@ data_long <- melt(data_raw, id.vars=c("person"))
 data_long <- separate(data = data_long, col = variable, into = c("occasion", "item"), sep = "_")
 ```
 
+##8) 8. Note the code available to you in the .do files, and include a) a discrete histogram of all 25x12x2 scores, b) a histogram of marginal person scores, c) a histogram of marginal item scores, and d) a histogram of marginal occasion scores.  Use discrete histograms where you think they are appropriate, or substitute tables if histograms are not informative, for example, tabulate occasion, summarize(score) .  Histograms of interactions are not necessary.
+=======
 8) \textbf{Note the code available to you in the .do files, and include a) a discrete histogram of all 25x12x2 scores, b) a histogram of marginal person scores, c) a histogram of marginal item scores, and d) a histogram of marginal occasion scores.  Use discrete histograms where you think they are appropriate, or substitute tables if histograms are not informative, for example, tabulate occasion, summarize(score) .  Histograms of interactions are not necessary.}
 
 
-**Part 3**
+\newpage
+#Part 3: The Generalizability Study
 
-9) \textbf{Write out the model implied by the data collection design under the tenets of Generalizability Theory.  Draw the Venn diagram for this design.}
+##9) Write out the model implied by the data collection design under the tenets of Generalizability Theory.  Draw the Venn diagram for this design.
 
 The model implied here can be written as
 \begin{align*}
@@ -108,13 +148,16 @@ X_{pi}&=\mu + \nu_p + \nu_i +\nu_o+ \nu_{pi}+ \nu_{po}+ \nu_{oi}+ \nu_{pio,e}\\
 \nu_{io}&\sim N(0,\sigma^2_{io})\\
 \nu_{pio,e}&\sim N(0,\sigma^2_{pio,e})
 \end{align*}
-The Venn diagram for the variances is seen below:
 
+ The venn diagram for the variances is seen below:
+=======
+The Venn diagram for the variances is seen below:
+ 
 ```{r,echo=F,fig.align='center',fig.width=5,fig.height=3}
 knitr::include_graphics('./VennDiagram.jpg')
 ```
 
-10) \textbf{Estimate the variance components for this model using the mixed or xtmixed command. Feel free to go get coffee while this runs.  Don’t forget to create interactions using commands like egen pXi = group(person item).  Include a table with four columns, the source of variance, the estimated variance components, their square roots, and their percentage of total score variance.}
+##10) Estimate the variance components for this model using the mixed or xtmixed command. Feel free to go get coffee while this runs.  Don’t forget to create interactions using commands like egen pXi = group(person item).  Include a table with four columns, the source of variance, the estimated variance components, their square roots, and their percentage of total score variance.
 
 ```{r,echo=T}
 
@@ -128,11 +171,14 @@ mixed <- lmer(value ~ 1 + (1|person) + (1|item) + (1|occasion) + (1|pxi) +
 summary(mixed)
 ```
 
+
+##11) A novice psychometrician with no sense of the context observes from the percentages, “it looks like items are a much greater source of variance than occasions!”  Explain the flaw in this reasoning.
+=======
 11) \textbf{A novice psychometrician with no sense of the context observes from the percentages, “it looks like items are a much greater source of variance than occasions!” Explain the flaw in this reasoning.}
 
 The novice is not taking into account the fact that there are many more items than occasions. Moreover, the cost of adding additional items may be quite low, especially as compared to adding another test. 
 
-12) \textbf{Estimate the Mean Squares for this model using the anova command.  You will first need to set the maximum matrix size to a large number, using code like set matsize 1000. Write out the equation for the estimated variance component, $\hat{\sigma^2_p}$, in terms of mean squares, $MS$, and confirm that this calculation corresponds to your results from mixed or xtmixed.  Recall that $n_p =25, n_i=12$ and $n_o=2$.}
+##12) Estimate the Mean Squares for this model using the anova command.  You will first need to set the maximum matrix size to a large number, using code like set matsize 1000. Write out the equation for the estimated variance component, $\hat{\sigma^2_p}$, in terms of mean squares, $MS$, and confirm that this calculation corresponds to your results from mixed or xtmixed.  Recall that $n_p =25, n_i=12$ and $n_o=2$.
 
 ```{r}
 anovlm <- lm(value ~ person + item + occasion +
@@ -141,6 +187,11 @@ anovlm <- lm(value ~ person + item + occasion +
 anova(anovlm)
 ```
 
+
+##13) Calculate and report the mean and standard deviation of marginal person scores, averaging over items and occasions.  Following the code from class, you could obtain this using code like, summarize pmean if ptag .  Explain why the term $\hat{\sigma_p}$, is less than the standard deviation of marginal person means.
+
+##14) Describe the $o$, $po$, and $io$ variance components in words, and include whether they are good, bad, or neutral with respect to relative error in a $p \times i \times o$ design.   There is no need to reference the actual values, here.
+=======
 The equation for finding $\hat{sigma}^2_p$ is $$\frac{MS_p-MS_{pi}-MS_{po}+MS_{pio,e}}{n_in_o}$$
 plugging in the Mean Squares and $n$s from our ANOVA, we find that the estimated variance component is $$\hat{\sigma}^2_p=\frac{16.7-1.72-1.97+.74}{12\cdot 2}=.5729$$
 This is basically the same as the answer we recieved from the mixed model. 
@@ -163,10 +214,15 @@ The estimate for $\sigma_p$ is smaller than our calcluated standard deviation he
 
 The $o$ variance component describes variance across occasions (constant across persons and items). This is ostensibly neutral as long as it affects all people equally. At the same time, we would prefer it to be smaller as it adds undesirable noise if we want to use the test score in an absolute setting. In contrast, the $po$ variance component is definitely bad, as it obfuscates both relative and absolute positions of persons across testing occasions. Finally, $oi$ variance is fairly benign. While it's not a good thing that items change across time, if it does not affect different people differently, then it will not alter peoples' relative scores. 
 
-**Part 4**
+\newpage
+#Part 4: The Decision Study
 
-15) \textbf{Write out the full equation for the relative error variance, $\sigma^2_\delta$}
+##15) Write out the full equation for the relative error variance, $\sigma^2_\delta$
 
+##16) Calculate the generalizability coefficient for relative error, $E\hat{\rho}^2$, when there are 12 items administered on one occasion.  Explain the differences between this coefficient, the coefficients from Question 5, and the coefficient from Question 6.  Explain the differences between the questions that these different coefficients answer.
+
+##17) Use the “pxixr D Study Template” to include a graph of a) the standard error of measurement and b) the generalizability coefficient for relative error.  Relabel and rescale where appropriate.
+=======
 As a rule, we know that any source of variability that intersects with the object of measurement (in this case persons) will change the measurement's relative position. In the case of a $p \times i \times o$ design, the relative error variance will include $\sigma^2_{pi}$, $\sigma^2_{po}$, and $\sigma^2_{pio,e}$ (see Figure). These variance components refer to single-unit replications, so we must divide by the relevant number of items and occasions to obtain error for average scores (over items and occasions). So the full equation for relative error variance is:
 
 $$\sigma^2_\delta=\frac{\sigma^2_{pi}}{n'_i}+\frac{\sigma^2_{po}}{n'_o} + \frac{\sigma^2_{pio,e}}{n'_i n'_o}$$
@@ -214,8 +270,8 @@ relative_error <- function(mod,raters,items) {
 }
 ```
 
-18) \textbf{If the scale is administered on 1 occasion, how many items are required to achieve a reliability of 0.75? You can use the template to answer this.}
+##18) If the scale is administered on 1 occasion, how many items are required to achieve a reliability of 0.75? You can use the template to answer this.
 
-19) \textbf{Compare the benefits of doubling the number of items from 6 to 12 versus doubling the number of occasions from 1 to 2.  Compare the benefits of doubling the number of items from 12 to 24 versus doubling the number of occasions from 1 to 2.  How could you use this information to address the question of whether items are a greater source of error than occasions?}
+##19) Compare the benefits of doubling the number of items from 6 to 12 versus doubling the number of occasions from 1 to 2.  Compare the benefits of doubling the number of items from 12 to 24 versus doubling the number of occasions from 1 to 2.  How could you use this information to address the question of whether items are a greater source of error than occasions?
 
  
