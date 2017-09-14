@@ -51,8 +51,8 @@ alpha2 <- alpha(data_o2, keys=NULL, title=NULL, cumulative=FALSE, max=10, na.rm 
 alpha_time1 <- alpha1$total$std.alpha
 alpha_time2 <- alpha2$total$std.alpha
 #output alpha data
-alpha1
-alpha2
+alpha1[c(1,2)]
+alpha2[c(1,2)]
 ```
 
 For this sample $\alpha_1 = `r round(alpha_time1,3)`$ and $\alpha_2 = `r round(alpha_time2,3)`$
@@ -94,7 +94,7 @@ X_{pi}&=\mu + \nu_p + \nu_i +\nu_o+ \nu_{pi}+ \nu_{po}+ \nu_{oi}+ \nu_{pio,e}\\
 \nu_{io}&\sim N(0,\sigma^2_{io})\\
 \nu_{pio,e}&\sim N(0,\sigma^2_{pio,e})
 \end{align*}
-The ven diagram for the variances is seen below:
+The Venn diagram for the variances is seen below:
 
 ```{r,echo=F,fig.align='center',fig.width=5,fig.height=3}
 knitr::include_graphics('./VennDiagram.jpg')
@@ -116,6 +116,8 @@ summary(mixed)
 
 11) \textbf{A novice psychometrician with no sense of the context observes from the percentages, “it looks like items are a much greater source of variance than occasions!”  Explain the flaw in this reasoning.}
 
+The novice is not taking into account the fact that there are many more items than occasions. Moreover, the cost of adding additional items may be quite low, especially as compared to adding another test. 
+
 12) \textbf{Estimate the Mean Squares for this model using the anova command.  You will first need to set the maximum matrix size to a large number, using code like set matsize 1000. Write out the equation for the estimated variance component, $\hat{\sigma^2_p}$, in terms of mean squares, $MS$, and confirm that this calculation corresponds to your results from mixed or xtmixed.  Recall that $n_p =25, n_i=12$ and $n_o=2$.}
 
 ```{r}
@@ -125,17 +127,33 @@ anovlm <- lm(value ~ person + item + occasion +
 anova(anovlm)
 ```
 
+The equation for finding $\hat{sigma}^2_p$ is $$\frac{MS_p-MS_{pi}-MS_{po}+MS_{pio,e}}{n_in_o}$$
+plugging in the Mean Squares and $n$s from our ANOVA, we find that the estimated variance component is $$\hat{sigma}^2_p=\frac{16.7-1.72-1.97+.74}{12\cdot 2}=.5729$$
+This is basically the same as the answer we recieved from the mixed model. 
+
 13) \textbf{Calculate and report the mean and standard deviation of marginal person scores, averaging over items and occasions.  Following the code from class, you could obtain this using code like, summarize pmean if ptag .  Explain why the term $\hat{\sigma_p}$, is less than the standard deviation of marginal person means.}
+
+```{r}
+#get marginal person scores
+
+marg_person <- ddply(data_long,"person",summarise,mean_p=mean(value))
+
+#mean person score
+round(mean(marg_person$mean_p),3)
+#variance of person scores
+round(sd(marg_person$mean_p),3)
+```
+The estimate for $\sigma_p$ is smaller than our calcluated standard deviation here (.757 vs .834) because the variance across people also includes the variance of people interacted with items, people interacted with occasions, and people interacted with both (plus random error). The whole point of G-theory is to separate these components out and so we would be remiss to assume that this standard deviation of person scores is all attributable to true differences in their scores. 
 
 14) \textbf{Describe the $o$, $po$, and $io$ variance components in words, and include whether they are good, bad, or neutral with respect to relative error in a $p \times i \times o$ design.   There is no need to reference the actual values, here.}
 
-The $o$ variance component describes variance across occations. 
+The $o$ variance component describes variance across occasions. This is ostensibly neutral as long as it affects all people equally. At the same time, we would prefer it to be smaller as it adds undesirable noise if we want to use the test score in an absolute setting. In contrast, the $po$ variance component is definitely bad, as it obfuscates both relative and absolute positions of persons across testing occasions. Finally, $oi$ variance is fairly benign. While it's not a good thing that items change across time, if it does not affect different people differently, then it will not alter peoples' relative scores. 
 
 **Part 4**
 
 15) \textbf{Write out the full equation for the relative error variance, $\sigma^2_\delta$}
 
-16) \textbf{Calculate the generalizability coefficient for relative error, $E\hat{\rho}^2$, when there are 12 items administered on one occasion.  Explain the differences between this coefficient, the coefficients from Question 5, and the coefficient from Question 6.  Explain the differences between the questions that these different coefficients answer.}
+16) \textbf{Calculate the generalization coefficient for relative error, $E\hat{\rho}^2$, when there are 12 items administered on one occasion.  Explain the differences between this coefficient, the coefficients from Question 5, and the coefficient from Question 6.  Explain the differences between the questions that these different coefficients answer.}
 
 17) \textbf{Use the “pxixr D Study Template” to include a graph of a) the standard error of measurement and b) the generalizability coefficient for relative error.  Relabel and rescale where appropriate.}
 
