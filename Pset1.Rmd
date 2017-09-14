@@ -15,7 +15,7 @@ library(tidyr)
 library(pander)
 library(knitr)
 
-opts_chunk$set(echo = TRUE,tidy.opts=list(width.cutoff=80),tidy=TRUE)
+opts_chunk$set(echo = TRUE,tidy.opts=list(width.cutoff=80),tidy=TRUE,message=FALSE,warning=FALSE)
 
 ```
 
@@ -36,11 +36,12 @@ The replication is the scoring process involving a random e-Rater (or, scoring a
 SB_Rho<-function(k,rho){
   return(k*rho/(1+(k-1)*rho))
 }
-
-SB_Rho(2,.7) # conceptually, this is the corr between two sets of e-Raters A&B and C&D
+  
+# conceptually, this is the corr between two sets of e-Raters A&B and C&D
+pander(paste0("Spearman-Brown Rho: ", round(SB_Rho(2,.7),2))) 
 ```
 
-
+\newpage
 ##4) The company asks you what a valid use of the third score would be. Remember this score is available for only 10\% of examinees. Should the company use this score alone? Should it use the unweighted average of the three scores (the two e-rater scores and the human score)?  Should it ignore the score and use the average of the two e-Rater scores?  Answer the following questions:
     
 ###a) If you were an examinee with a high (well above average) true score, would you rather have the human score, the average of the two e-rater scores, or the average of all three scores?
@@ -77,19 +78,16 @@ alpha2 <- alpha(data_o2, keys=NULL, title=NULL, cumulative=FALSE, max=10, na.rm 
 alpha_time1 <- alpha1$total$std.alpha
 alpha_time2 <- alpha2$total$std.alpha
 #output alpha data
-alpha1
-alpha2
+# alpha1
+# alpha2
+ 
+pander(summary(alpha1),caption="First occasion")
+pander(alpha2[c(2)],caption="Alphas with deletions")
 
-
-pander(alpha2)
-summary(alpha2)
-pander(summary(alpha2))
-
-alpha1[c(1,2)]
-alpha2[c(1,2)]
+pander(summary(alpha2),caption="Second occasion")
+pander(alpha1[c(2)],caption="Alphas with deletions")
 ```
  
-
 For this sample $\alpha_1 = `r round(alpha_time1,3)`$ and $\alpha_2 = `r round(alpha_time2,3)`$
 
 ##6) Using Stata, calculate the average score of participants from the first occasion, then calculate the average score of participants from the second occasion. Then, calculate the correlation between the two average scores using code like pwcorr avgscr1 avgscr2.  Report this correlation and, in a sentence or two, provide an interpretation (see also Question 16).
