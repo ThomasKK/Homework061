@@ -190,6 +190,12 @@ $$E\hat{\rho}^2 = \frac{0.573}{0.573 + 0.122}=0.824$$
 17) \textbf{Use the “$p \times i \times r$ D Study Template” to include a graph of a) the standard error of measurement and b) the generalizability coefficient for relative error. Relabel and rescale where appropriate.}
 
 ```{r,echo=T}
+## This is a function to generate the relative error
+## coefficient given a model, a number of raters and 
+## a number of items. One weakness is that it presumes
+## the names of your predictors and so is not suitable for
+## general use. It does do the math correctly though and matches
+## the output from Andrew's spreadsheet!
 
 relative_error <- function(mod,raters,items) {
   
@@ -205,9 +211,7 @@ relative_error <- function(mod,raters,items) {
   
   rel_err <- (pxi/items)+(pxo/raters)+(err/(items*raters))
   return(rel_err)
-  
 }
-
 ```
 
 18) \textbf{If the scale is administered on 1 occasion, how many items are required to achieve a reliability of 0.75? You can use the template to answer this.}
