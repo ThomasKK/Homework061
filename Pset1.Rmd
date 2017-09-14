@@ -37,7 +37,7 @@ SB_Rho<-function(k,rho){
   return(k*rho/(1+(k-1)*rho))
 }
 
-SB_Rho(2,.7)
+SB_Rho(2,.7) # conceptually, this is the corr between two sets of e-Raters A&B and C&D
 ```
 
 
@@ -45,31 +45,15 @@ SB_Rho(2,.7)
     
 ###a) If you were an examinee with a high (well above average) true score, would you rather have the human score, the average of the two e-rater scores, or the average of all three scores?
 
-The researcher is referring to the reliability of the score generating processes by the population of random e-Raters with different scoring algorithms for this specific essay prompt, from which e-Raters A and B came.  We can think of this as the inter-rater reliability 
-
-##2) If the researcher considers 0.7 to be the reliability, what is the replication that she assumes is relevant?  What is random, and what is fixed?}
-
-The replication is the scoring process involving a random e-Rater (or, scoring algorithm).  The e-Rater/scoring algorithm is random, but the students, form, and testing occasion are fixed.
-
-
-##3) Apply Spearman-Brown (actually perform a calculation) to estimate the reliability of the average these two e-Rater scores.
-
-```{r}
-#create function to calculate Spearman-Brown
-SB_Rho<-function(k,rho){
-  return(k*rho/(1+(k-1)*rho))
-}
-
-SB_Rho(2,.7)
-```
-
-##4) The company asks you what a valid use of the third score would be. Remember this score is available for only 10\% of examinees. Should the company use this score alone? Should it use the unweighted average of the three scores (the two e-rater scores and the human score)?  Should it ignore the score and use the average of the two e-Rater scores?  Answer the following questions:
-
-###a) If you were an examinee with a high (well above average) true score, would you rather have the human score, the average of the two e-rater scores, or the average of all three scores?
+We would want the average of all three scores to minimize the error variance.
 
 ###b) If you were an examinee with a low (well below average) true score, would you rather have the human score, the average of the two e-rater scores, or the average of all three scores? 
   
+Because we can assume the human score is equally accurate and equally covarying with the e-Raters, we would rather have the single human score.  This gives me a higher chance of having a large error to potentially mask my low "true score."  
+  
 ###c) Weighing all considerations for the intended use of these scores for college admissions, what would be your recommendation to the company for how they should use this third score?
+  
+We recommend ignoring the third score and only use the average of the e-Raters for admissions purposes.  Since this third score is only available for 10% of students, by averaging scores for that subgroup, we'd increase the precision (i.e., reduce the error variance) for their scores.  That is, for 10% of people, they're more likely to be disadvantaged if their true score is low and more likely to be advantaged if their true score is high. Since this advantage/diadvantage is not available to the rest of the sample, it would be unfair.   
   
 \newpage
 #Part 2: Classical Test Theory and Exploratory Analysis
@@ -127,7 +111,7 @@ data_long <- melt(data_raw, id.vars=c("person"))
 data_long <- separate(data = data_long, col = variable, into = c("occasion", "item"), sep = "_")
 ```
 
-##8) 8. Note the code available to you in the .do files, and include a) a discrete histogram of all 25x12x2 scores, b) a histogram of marginal person scores, c) a histogram of marginal item scores, and d) a histogram of marginal occasion scores.  Use discrete histograms where you think they are appropriate, or substitute tables if histograms are not informative, for example, tabulate occasion, summarize(score) .  Histograms of interactions are not necessary.
+##8) Note the code available to you in the .do files, and include a) a discrete histogram of all 25x12x2 scores, b) a histogram of marginal person scores, c) a histogram of marginal item scores, and d) a histogram of marginal occasion scores.  Use discrete histograms where you think they are appropriate, or substitute tables if histograms are not informative, for example, tabulate occasion, summarize(score) .  Histograms of interactions are not necessary.
 
 
 
