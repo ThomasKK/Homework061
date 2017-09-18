@@ -116,6 +116,44 @@ data_long <- separate(data = data_long, col = variable, into = c("occasion", "it
 
 ##8) Note the code available to you in the .do files, and include a) a discrete histogram of all 25x12x2 scores, b) a histogram of marginal person scores, c) a histogram of marginal item scores, and d) a histogram of marginal occasion scores.  Use discrete histograms where you think they are appropriate, or substitute tables if histograms are not informative, for example, tabulate occasion, summarize(score) .  Histograms of interactions are not necessary.
 
+```{r,echo=T}
+# (a) Discrete histogram of raw person-item-occasion scores
+qplot(data_long$value, geom="histogram", main = "Histogram of all 25p x 12i x 2o GRIT Scores", xlab = "Person-Item-Occassion Raw Score", ylab = "Frequency", ylim=c(0,200), breaks=rep(1:5, each=2)+c(-0.3, 0.3)) 
+```
+
+```{r,echo=F,fig.align='center',fig.width=3}
+knitr::include_graphics('./8a_Hist_all.jpeg')
+```
+
+```{r,echo=T}
+# (b) person average score
+marg_person <- ddply(data_long,"person",summarise,mean_p=mean(value))
+qplot(marg_person$mean_p, geom="histogram", main = "Histogram of Person Average GRIT Scores (over 12i and 2o)", xlab = "Person Average GRIT Score", ylab = "Frequency", ylim=c(0,2), xlim=c(1,5)) 
+```
+
+```{r,echo=F,fig.align='center',fig.width=3}
+knitr::include_graphics('./8b_Hist_p.jpeg')
+```
+
+```{r,echo=T}
+# (c) item average score
+marg_item <- ddply(data_long,"item",summarise,mean_i=mean(value))
+qplot(marg_item$mean_i, geom="histogram", main = "Histogram of Item Average GRIT Scores (over 25p and 2o)", xlab = "Item Average Score", ylab = "Frequency", ylim=c(0,2), xlim=c(1,5)) 
+```
+
+```{r,echo=F,fig.align='center',fig.width=3}
+knitr::include_graphics('./8c_Hist_i.jpeg')
+```
+
+```{r,echo=T}
+# (d) occasion average score
+marg_occ <- ddply(data_long,"occasion",summarise,mean_o=mean(value))
+```
+
+```{r,echo=F,fig.align='center',fig.width=3}
+knitr::include_graphics('./8d_Tab_o.png')
+```
+
 \newpage
 #Part 3: The Generalizability Study
 
