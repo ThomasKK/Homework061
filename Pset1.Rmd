@@ -1,6 +1,6 @@
 ---
 title: "S-061 Assignment 1"
-author: "Thomas Kelley-Kemple, Joanna Moody, Vinh Nguyen"
+author: "Anonymous"
 date: "September 18, 2017"
 output: pdf_document
 ---
@@ -49,7 +49,7 @@ pander(paste0("Spearman-Brown Rho: ", round(SB_Rho(2,.7),2)))
     
 ###a) If you were an examinee with a high (well above average) true score, would you rather have the human score, the average of the two e-rater scores, or the average of all three scores?
 
-We would want the average of all three scores to minimize the error variance.
+We would want the average of all three scores to minimize the error variance. The more measurements we have of a given individual's score, the more likely it is that the average error will equal 0, (as the number of measurements approaches infinity, it should equal exactly 0), thus revealing the individual's true score. 
 
 ###b) If you were an examinee with a low (well below average) true score, would you rather have the human score, the average of the two e-rater scores, or the average of all three scores? 
   
@@ -122,7 +122,7 @@ data_long[1:20,]
 
 ```{r,echo=T}
 # (a) Discrete histogram of raw person-item-occasion scores
-qplot(data_long$value, geom="histogram", main = "Histogram of all 25p x 12i x 2o GRIT Scores", xlab = "Person-Item-Occassion Raw Score", ylab = "Frequency", ylim=c(0,200), breaks=rep(1:5, each=2)+c(-0.3, 0.3)) 
+qplot(data_long$value, geom="histogram", main = "Histogram of all 25p x 12i x 2o GRIT Scores", xlab = "Person-Item-Occasion Raw Score", ylab = "Frequency", ylim=c(0,200), breaks=rep(1:5, each=2)+c(-0.3, 0.3)) 
 ```
 
 ```{r,echo=T}
@@ -226,7 +226,7 @@ The estimate for $\sigma_p$ is smaller than our calculated standard deviation he
 
 ##14) Describe the $o$, $po$, and $io$ variance components in words, and include whether they are good, bad, or neutral with respect to relative error in a $p \times i \times o$ design.   There is no need to reference the actual values, here.
 
-The $o$ variance component describes variance across occasions (constant across persons and items). This is ostensibly neutral as long as it affects all people equally. At the same time, we would prefer it to be smaller as it adds undesirable noise if we want to use the test score in an absolute setting. In contrast, the $po$ variance component is definitely bad, as it obfuscates both relative and absolute positions of persons across testing occasions. Finally, $oi$ variance is fairly benign. While it's not a good thing that items change across time, if it does not affect different people differently, then it will not alter peoples' relative scores. 
+The $o$ variance component describes variance across occasions (constant across persons and items). This is ostensibly neutral as long as it affects all people equally. At the same time, we would prefer it to be smaller as it adds undesirable noise if we want to use the test score in an absolute setting. Additionally, the $o$ variance component can cause problems if we want to use the test to compare cohorts across time. If we want to see whether successive cohorts of 5th graders are getting 'gritier', then $o$ variation could lead us to make incorrect conclusions. In contrast, the $po$ variance component is definitely bad, as it obfuscates both relative and absolute positions of persons across testing occasions. Finally, $oi$ variance is fairly benign. While it's not a good thing that items change across time, if it does not affect different people differently, then it will not alter peoples' relative scores. 
 
 \newpage
 #Part 4: The Decision Study
@@ -283,11 +283,11 @@ relative_error <- function(mod,raters,items) {
 }
 
 ggplot()+
-  geom_line(aes(x=c(1:12),y=relative_error(mixed,1,1:12),colour="One Time"))+
-  geom_line(aes(x=c(1:12),y=relative_error(mixed,2,1:12),colour="Two Times")) +
-  geom_line(aes(x=c(1:12),y=relative_error(mixed,3,1:12),colour="Three Times")) +
-  geom_line(aes(x=c(1:12),y=relative_error(mixed,4,1:12),colour="Four Times")) +
-  geom_line(aes(x=c(1:12),y=relative_error(mixed,5,1:12),colour="Five Times")) +
+  geom_line(aes(x=c(1:12),y=relative_error(mixed,1,1:12),colour="1 Time"))+
+  geom_line(aes(x=c(1:12),y=relative_error(mixed,2,1:12),colour="2 Times")) +
+  geom_line(aes(x=c(1:12),y=relative_error(mixed,3,1:12),colour="3 Times")) +
+  geom_line(aes(x=c(1:12),y=relative_error(mixed,4,1:12),colour="4 Times")) +
+  geom_line(aes(x=c(1:12),y=relative_error(mixed,5,1:12),colour="5 Times")) +
   xlab("Number of Items") + ylab("Standard Error of Measurement") +
   ggtitle("Standard Error of Measurement Across Times and Items")
 
@@ -313,17 +313,22 @@ rel_coeff <- function(mod,raters,items) {
 
 
 ggplot()+
-  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,1,1:12),colour="One Time"))+
-  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,2,1:12),colour="Two Times")) +
-  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,3,1:12),colour="Three Times")) +
-  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,4,1:12),colour="Four Times")) +
-  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,5,1:12),colour="Five Times")) +
+  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,1,1:12),colour="1 Time"))+
+  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,2,1:12),colour="2 Times")) +
+  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,3,1:12),colour="3 Times")) +
+  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,4,1:12),colour="4 Times")) +
+  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,5,1:12),colour="5 Times")) +
   xlab("Number of Items") + ylab("Reliability Coefficient") +
   ggtitle("Reliability Coefficient Across Times and Items")
 
 ```
 
 ##18) If the scale is administered on 1 occasion, how many items are required to achieve a reliability of 0.75? You can use the template to answer this.
+
+```{r}
+rel_coeff(mixed,1,13)
+rel_coeff(mixed,1,14)
+```
 
 Using the formula above, and starting with 13 items (seeing that the green line on the second graph doesn't reach .75), we found that 14 items would be needed to reach a reliability of .751. 
 
@@ -342,4 +347,7 @@ rel_coeff(mixed,1,24)
 rel_coeff(mixed,2,12)
 ```
 This second test, which involves a larger baseline of items provides similar results. Doubling the number of items results in a much smaller increase in reliability as compared to doubling occasions. In fact, it appears as though the marginal impact of going from 12-24 is smaller than the benefit of going from 6-12 (this makes sense given the shape of the graph from number 17). It seems clear that occasions are a much greater source of error --- that is more error can be eliminated by increasing occasions --- than items.  
+
+#Authors
+## Thomas Kelley-Kemple, Joanna Moody, Vinh Nguyen
  
