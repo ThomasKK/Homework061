@@ -14,6 +14,9 @@ library(lme4)
 library(tidyr)
 library(pander)
 library(knitr)
+library(ggplot2)
+
+alpha <- psych::alpha
 
 opts_chunk$set(echo = TRUE,tidy.opts=list(width.cutoff=80),tidy=TRUE,message=FALSE,warning=FALSE)
 
@@ -72,7 +75,7 @@ o2 <- paste0("x_o2_i", 1:12)
 data_o1 <- subset(data_raw, select = o1)
 data_o2 <- subset(data_raw, select = o2)
 #create alpha output
-alpha1 <- alpha(data_o1, keys=NULL, title=NULL, cumulative=FALSE, max=10, na.rm = TRUE, check.keys=TRUE, n.iter=1, delete=TRUE)
+alpha1 <- alpha(data_o1)
 alpha2 <- alpha(data_o2, keys=NULL, title=NULL, cumulative=FALSE, max=10, na.rm = TRUE, check.keys=TRUE, n.iter=1, delete=TRUE)
 #get just the alpha numbers
 alpha_time1 <- alpha1$total$std.alpha
@@ -241,10 +244,65 @@ relative_error <- function(mod,raters,items) {
   rel_err <- (pxi/items)+(pxo/raters)+(err/(items*raters))
   return(rel_err)
 }
+
+ggplot()+
+  geom_line(aes(x=c(1:12),y=relative_error(mixed,1,1:12),colour="One Times"))+
+  geom_line(aes(x=c(1:12),y=relative_error(mixed,2,1:12),colour="Two Times")) +
+  geom_line(aes(x=c(1:12),y=relative_error(mixed,3,1:12),colour="Three Times")) +
+  geom_line(aes(x=c(1:12),y=relative_error(mixed,4,1:12),colour="Four Times")) +
+  geom_line(aes(x=c(1:12),y=relative_error(mixed,5,1:12),colour="Five Times")) +
+  xlab("Number of Items") + ylab("Standard Error of Measurement") +
+  ggtitle("Standard Error of Measurement Across Times and Items")
+
+##This function opperates the same way as the one above, it
+## just adds in the next step to generate the generalizability
+## coefficient
+rel_coeff <- function(mod,raters,items) {
+  
+  sdvar <- as.data.frame(VarCorr(mod))
+  sdvar$varComp <- sdvar$sdcor^2
+  p <- sdvar$varComp[sdvar$grp=="person"]
+  o <- sdvar$varComp[sdvar$grp=="occasion"]
+  i <- sdvar$varComp[sdvar$grp=="item"]
+  pxi <- sdvar$varComp[sdvar$grp=="pxi"]
+  pxo <- sdvar$varComp[sdvar$grp=="pxo"]
+  oxi <- sdvar$varComp[sdvar$grp=="oxi"]
+  err <- sdvar$varComp[sdvar$grp=="Residual"]
+  
+  rel_err <- (pxi/items)+(pxo/raters)+(err/(items*raters))
+  gcoef <- (p/(p+rel_err))
+  return(gcoef)
+}
+
+
+ggplot()+
+  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,1,1:12),colour="One Times"))+
+  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,2,1:12),colour="Two Times")) +
+  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,3,1:12),colour="Three Times")) +
+  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,4,1:12),colour="Four Times")) +
+  geom_line(aes(x=c(1:12),y=rel_coeff(mixed,5,1:12),colour="Five Times")) +
+  xlab("Number of Items") + ylab("Reliability Coefficient") +
+  ggtitle("Reliability Coefficient Across Times and Items")
+
 ```
 
 ##18) If the scale is administered on 1 occasion, how many items are required to achieve a reliability of 0.75? You can use the template to answer this.
 
+Using the formula above, and starting with 13 items (seeing that the green line on the second graph doesn't reach .75), we found that 14 items would be needed to reach a reliability of .751. 
+
 ##19) Compare the benefits of doubling the number of items from 6 to 12 versus doubling the number of occasions from 1 to 2.  Compare the benefits of doubling the number of items from 12 to 24 versus doubling the number of occasions from 1 to 2.  How could you use this information to address the question of whether items are a greater source of error than occasions?
 
+```{r}
+rel_coeff(mixed,6,1)
+rel_coeff(mixed,12,1)
+rel_coeff(mixed,6,2)
+```
+In the above calculations, we examine the possibilty of moving from 6 to twelve items (holding the occasions constant at 1), versus moving from 1 to 2 occasions (holding the items constant at 6). It seems clear that increasing the number of occasions yeilds greater benefits than increasing the number of items. At the same time, the cost of administering an additional test seems much higher than the cost of administering additional items. 
+
+```{r}
+rel_coeff(mixed,12,1)
+rel_coeff(mixed,24,1)
+rel_coeff(mixed,12,2)
+```
+This second test, which involves a larger baseline of items provides similar results. Doubling the number of items results in a much smaller increase in reliability as compared to doubling occasions. In fact, it appears as though the marginal impact of going from 12-24 is smaller than the benefit of going from 6-12 (this makes sense given the shape of the graph from number 17). It seems clear that occasions are a much greater source of error --- that is more error can be eliminated by increasing occasions --- than items.  
  
