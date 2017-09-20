@@ -95,7 +95,7 @@ pander(alpha2[c(2)],caption="Alphas with deletions")
  
 For this sample $\alpha_1 = `r round(alpha_time1,3)`$ and $\alpha_2 = `r round(alpha_time2,3)`$. 
 
-For a single occasion, Cronbach's alpha is a measure of internal consistency reliability of items. For each occasion separately, Cronbach's alpha is calculated as a function of the number of items (n), item-level variances ($\sigma^2_{X_i}$), and the variance of the observed total scores (\sigma^2_{X}):
+For a single occasion, Cronbach's alpha is a measure of internal consistency reliability of items. For each occasion separately, Cronbach's alpha is calculated as a function of the number of items (n), item-level variances ($\sigma^2_{X_i}$), and the variance of the observed total scores ($\sigma^2_{X})$:
 $$\alpha = \left( \frac{n}{n-1}\right)\left(1-\frac{\sum_i \sigma^2_{X_i}}{\sigma^2_{X}} \right)$$
 In general, if all of the items are entirely indpendent from one another (are not correlated or have no covariance), then $\alpha = 1$; and if all of the items have high covariances then $\alpha$ will approach 1 as the number of items in the scale approaches infinity. For occasion 1, we found $\alpha_1 = `r round(alpha_time1,3)`$ indicating a reasonably high degree of shared covariance (or internal consistency) among the items on that occassion. Cronbach's alpha, intepreted as an average of all possible split-half reliability coefficients, can also be considered a lower bound to reliability of the test as long as item sampling is the only source of error (which we know from our explorations below it is not).
 
@@ -259,8 +259,8 @@ knitr::include_graphics('./Fig_Q15.jpg')
 
 The generalization coefficient for relative error, $E\hat{\rho}^2 = \frac{\sigma^2_p}{\sigma^2_p + \sigma^2_\delta}$.
 
-And from Question 15, we know ${\sigma^2_p}= 0.573$. Plugging in these numbers into the above equation we get:
-$$E\hat{\rho}^2 = \frac{0.573}{0.573 + 0.122}=0.824$$
+Using the formula from Question 15, we know ${\sigma^2_\delta}= 0.204$ (we reasjusted the $n_i$ to fit the new conditons), and we know from question 12 that $\sigma^2_p$ is.5729. Plugging in these numbers into the above equation we get:
+$$E\hat{\rho}^2 = \frac{0.573}{0.573 + 0.204}=0.737$$
 The relative error does not include error terms $\sigma^2_i$ or $\sigma^2_o$ because variation across items or occasions, respectively, are the same for every person. Items that are more difficult will be more difficult for all persons and occasions with distractions will be more difficult for all persons. Therefore, they do not affect the relative position of one person to another. The same is true for variability for item-occasion interactions ($\sigma^2_{io}$).
 
 
